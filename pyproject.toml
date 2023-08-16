@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "intro-to-fp-bird-wadler"
+version = "0.1.0"
+description = ""
+authors = ["Oleg Alexander <olegalexander@gmail.com>"]
+readme = "README.md"
+packages = [{include = "intro_to_fp_bird_wadler"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+more-itertools = "^10.1.0"
+pytest = "^7.4.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+strict = true
+
+[tool.pytest.ini_options]
+pythonpath = "."
+
+[tool.autopep8]
+ignore = ["E501","E731"]
