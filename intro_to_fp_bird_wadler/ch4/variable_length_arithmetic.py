@@ -120,7 +120,7 @@ def dstep(ys: list[int], q_rs: tuple[int, list[int]], x: int) -> tuple[int, list
         return bstep(xs, ys)
     if len(xs) == len(ys) + 1:
         return cstep(xs, ys)
-    assert False  # unreachable
+    assert False, "unreachable"
 
 
 def guess(xs_: list[int], ys_: list[int]) -> int:

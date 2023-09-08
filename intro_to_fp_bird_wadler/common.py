@@ -30,3 +30,8 @@ def snd(pair: tuple[T, U]) -> U:
 
 def scan(f: Callable[[T, U], T], acc: T, xs: list[U]) -> list[T]:
     return list(accumulate(xs, lambda x, y: f(x, y), initial=acc))
+
+
+def inits(it: list[T]) -> list[list[T]]:
+    """Source: https://stackoverflow.com/a/33332733"""
+    return [list(it[:i]) for i in range(len(it) + 1)]
