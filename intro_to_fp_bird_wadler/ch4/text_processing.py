@@ -1,4 +1,5 @@
 from typing import NewType
+from itertools import chain, islice, pairwise
 from more_itertools import split_at, intersperse, flatten
 from intro_to_fp_bird_wadler.common import inits
 
@@ -32,8 +33,8 @@ def paras(lines: list[Line]) -> list[Para]:
 def deduplicate_empty_strings(lines: list[Line]) -> list[Line]:
     """I added this because this is probably what the authors meant to do?
     Runs of spaces are collapsed into a single space, so why not runs of empty lines?"""
-    return [Line(s) for i, s in enumerate(lines)
-            if s != "" or (i + 1 < len(lines) and lines[i + 1] != "") or i == len(lines) - 1]
+    paired = pairwise(lines + [""])
+    return [Line(s) for s, next_s in paired if s != "" or next_s != ""]
 
 
 def unparas(paras: list[Para]) -> list[Line]:
@@ -80,6 +81,8 @@ Line three."""
     assert paras(lines("Line one.\nLine two.\n\nLine three.")) == [['Line one.', 'Line two.'], ['Line three.']]
     assert unparas(paras(lines("Line one.\nLine two.\n\n\nLine three."))) == ['Line one.', 'Line two.', '', 'Line three.']
     assert unparas(paras(lines("Line one.\nLine one.\n\n\nLine three."))) == ['Line one.', 'Line one.', '', 'Line three.']
+    assert deduplicate_empty_strings(list(map(Line, ['Line one.', 'Line two.', '', '', 'Line three.']))) == ['Line one.', 'Line two.', '', 'Line three.']
+    assert deduplicate_empty_strings(list(map(Line, ['Line one.', 'Line one.', '', '', 'Line three.']))) == ['Line one.', 'Line one.', '', 'Line three.']
 
     assert words(Line("This   is a line")) == ['This', 'is', 'a', 'line']
     assert words(Line("line")) == ['line']
