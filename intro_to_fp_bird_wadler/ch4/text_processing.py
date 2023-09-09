@@ -1,5 +1,6 @@
 from typing import NewType
 from more_itertools import split_at, intersperse, flatten
+from intro_to_fp_bird_wadler.common import inits
 
 Line = NewType('Line', str)
 Word = NewType('Word', str)
@@ -28,8 +29,15 @@ def paras(lines: list[Line]) -> list[Para]:
             in split_at(lines, lambda line: line == '')]
 
 
+def deduplicate_empty_strings(lines: list[Line]) -> list[Line]:
+    """I added this because this is probably what the authors meant to do?
+    Runs of spaces are collapsed into a single space, so why not runs of empty lines?"""
+    return [Line(s) for i, s in enumerate(lines)
+            if s != "" or (i + 1 < len(lines) and lines[i + 1] != "") or i == len(lines) - 1]
+
+
 def unparas(paras: list[Para]) -> list[Line]:
-    return list(flatten(intersperse([Line('')], paras)))
+    return deduplicate_empty_strings(list(flatten(intersperse([Line('')], paras))))
 
 
 def countlines(text: str) -> int:
@@ -58,7 +66,7 @@ def normalize(text: str) -> str:
 
 
 if __name__ == "__main__":
-    assert normalize("Line   one.\nLine    two.\n\nLine   three.") == """Line one.
+    assert normalize("Line   one.\nLine    two.\n\n\nLine   three.") == """Line one.
 Line two.
 
 Line three."""
@@ -70,7 +78,8 @@ Line three."""
     assert countparas("Line one.\nLine two.\n\nLine three.") == 2
 
     assert paras(lines("Line one.\nLine two.\n\nLine three.")) == [['Line one.', 'Line two.'], ['Line three.']]
-    assert unparas(paras(lines("Line one.\nLine two.\n\nLine three."))) == ['Line one.', 'Line two.', '', 'Line three.']
+    assert unparas(paras(lines("Line one.\nLine two.\n\n\nLine three."))) == ['Line one.', 'Line two.', '', 'Line three.']
+    assert unparas(paras(lines("Line one.\nLine one.\n\n\nLine three."))) == ['Line one.', 'Line one.', '', 'Line three.']
 
     assert words(Line("This   is a line")) == ['This', 'is', 'a', 'line']
     assert words(Line("line")) == ['line']
